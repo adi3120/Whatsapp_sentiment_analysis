@@ -1,11 +1,7 @@
-from io import StringIO
 import streamlit as st
 import re
 import pandas as pd
-import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from transformers import Conversation
-import emoji
 
 
 def date_time(s):
