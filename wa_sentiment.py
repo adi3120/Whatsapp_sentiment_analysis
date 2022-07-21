@@ -1,8 +1,11 @@
+from io import StringIO
 import streamlit as st
 import re
 import pandas as pd
 import matplotlib.pyplot as plt
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from transformers import Conversation
+import emoji
 
 
 def date_time(s):
@@ -33,7 +36,11 @@ def getDatapoint(line):
     return date, time, author, message
 
 data=[]
-conversation=st.text_input("Enter the link to your 'whatsapp_chat.txt' file")
+conversation="WhatsApp Chat with ⚡TI CORE ⚡.txt"
+
+st.title("Whatsapp chat sentiment analysis")
+
+st.write("# Your chat")
 
 with open(conversation, encoding="utf-8") as fp:
   fp.readline()
@@ -59,3 +66,36 @@ st.dataframe(df)
 
 
 df['Date'] = pd.to_datetime(df['Date'])
+data = df.dropna()
+
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+import nltk
+nltk.download('vader_lexicon')
+
+sentiments = SentimentIntensityAnalyzer()
+
+
+
+data["Positive"] = [sentiments.polarity_scores(i)["pos"] for i in data["Message"]]
+data["Negative"] = [sentiments.polarity_scores(i)["neg"] for i in data["Message"]]
+data["Neutral"] = [sentiments.polarity_scores(i)["neu"] for i in data["Message"]]
+
+
+st.write("# Processed Sentiments!")
+st.dataframe(data[["Message","Positive","Negative","Neutral"]])
+
+x = sum(data["Positive"])
+y = sum(data["Negative"])
+z = sum(data["Neutral"])
+
+def sentiment_score(a, b, c):
+    if (a>b) and (a>c):
+        print("Positive 😊 ")
+    elif (b>a) and (b>c):
+        print("Negative 😠 ")
+    else:
+        print("Neutral 🙂 ")
+
+# st.write("# Overall Sentimental Value of the chat : ")
+# print(sentiment_score(x,y,z))
